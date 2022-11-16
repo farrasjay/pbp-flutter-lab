@@ -66,7 +66,7 @@ Generally, setState() is only being used with statefulWidgets insides flutter. s
 final birthday = getBirthDateFromDB()
 ``` 
 
-=====================================================================
+================================
 
 **const** keyword used to make a variable to store a compile time constant value. Compile time constant value is a value which will be constant while compiling.
 
@@ -121,3 +121,191 @@ const birthday  = "2008/12/25"
               )
             ),
     ```
+
+================================
+
+# Form & Data Budget #
+
+**Assignment 8 PBP : Flutter Navigation, Form, and Inputs**
+
+*Farras Hafizhudin Indra Wijaya - 2106652682 - PBP B*
+
+# Navigator #
+
+*Source* : [Flutter Docs](https://api.flutter.dev/flutter/widgets/Navigator/pushReplacement.html)
+
+**Navigator.push**
+
+Replace the current route of the navigator that most tightly encloses the given context by pushing the given route and then disposing the previous route once the new route has finished animating in.
+
+**Navigator.pushReplacement**
+
+Adds a Route to the stack of routes managed by the Navigator. Where does the Route come from? By using a MaterialPageRoute, which is useful because it transitions to the new route using a platform-specific animation.
+
+# Widgets Catalog #
+
+*Source* : [Flutter Docs](https://docs.flutter.dev/development/ui/widgets)
+
+- [x] Basic Widgets
+    - **AppBar**
+        
+        A Material Design app bar that consists of a toolbar and  - potentially other widgets, such as a TabBar and a FlexibleSpaceBar.
+    
+    - **Icons, Scaffold**
+  
+        Implements the basic Material Design visual layout structure. This class provides APIs for showing drawers, snack bars, and bottom sheets.
+
+    - **Column, Row, Container**
+  
+        Widgets that combine common painting, positioning, and sizing widgets.
+
+- [x] Text Widgets
+    - **Text, TextStyle & TextButton**
+  
+        A run of text with a single style. The text style to apply to descendant Text widgets with explicit style.
+
+- [x] Interactivity Widgets
+    - **Floating Action Button**
+
+        Widget that floats on the screen over other widgets. It appears as a circular icon on the screen with an icon in its center as its child.
+
+# Flutter Events #
+
+*Source* : [Siemens](https://support.industry.siemens.com/forum/WW/en/posts/what-the-difference-between-click-and-press-in-event/136377)
+
+- *onPressed* = Occurs when the user clicks on a button with the left mouse button, presses RETURN or SPACE. Also occurs when the user right-clicks on an object of the symbol library.
+
+- *onClicked* = Occurs if the user clicks a display and operating object with the mouse or touches the touch display with a finger.
+
+- *onChanged* = Occurs whenever something is changing values
+
+- *onSaved* = Occurs whenever is saved into any type of data, could be variables, elements, attributes, etc
+
+- *onTap* = same as onPressed but instead of buttons, it detects gestures
+
+
+# How Navigator Works #
+
+Navigator works just like stacks, whenever you move or navigate to a page, it pushes that page to top of the stack and so does the framework animation
+
+For ex :
+
+push -> push the stack up top
+
+pushReplacement -> push the stack up top, dispose the one below it
+
+<center>
+A
+
+B
+
+C
+</center>
+
+# Checklist Implementations #
+
+- [x] Add 2 new pages called "Form Budget" & "Data Budget".
+    ```dart
+        ListTile(
+            leading: Icon(Icons.home),
+            title: Text("Counter"),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const CounterPage()),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.report),
+            title: Text("Tambah Budget"),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const AddBudgetPage()),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.settings),
+            title: Text("Data Budget"),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const BudgetDataPage()),
+              );
+            },
+          ),
+    ``` 
+
+- [x] Insert Form Budget's Page Attributes & Elements.
+    ```dart
+    class currentData {
+        static List<String> _judul = [];
+        static List<String> _nominal = [];
+        static List<String> _budgeting = [];
+
+        static String placeholderJudul = '';
+        static String placeholderNominal = '';
+        static String placeholderBudgeting = 'Pilih';
+        static List<String> jenisBudgeting = ['Pilih','Pemasukan', 'Pengeluaran'];
+    }
+    ```
+    ```dart
+    TextButton(
+        child: const Text(
+        "Simpan",
+        style: TextStyle(color: Colors.white),
+        ),
+        style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.blue),
+        ),
+        onPressed: () {
+        if (_formKey.currentState!.validate()) {
+            currentData.addJudul(currentData.placeholderJudul);
+            currentData.addNominal(currentData.placeholderNominal);
+            currentData.addData(currentData.placeholderBudgeting);
+    ```
+
+- [x] Show Posted Data from Form Budget's Page in Data's Budget Page.
+    ```dart
+    for (int i = 0; i < indexLength; i++) ListView(
+        padding: const EdgeInsets.only(top: 20, bottom: 20),
+        shrinkWrap: true,
+        children: [
+        SizedBox(height: 20),
+        // TODO: Munculkan informasi yang didapat dari form
+        Text( 
+            judul[i],
+            textAlign: TextAlign.left,
+        ),
+        Text(
+            nominal[i],
+            textAlign: TextAlign.left,
+        ),
+        Text(
+            budgeting[i],
+            textAlign: TextAlign.right,
+        ),
+        ],
+    ),
+    ```
+
+- [x] **(Bonus)** Implement DateTimeField & Seperate Drawer class
+    -  Insert DateTimeField Attribute & Element in Form Budget's Page, Show it in Data's Budget Page.
+    -  Seperate Drawer class.
+        ```dart
+        class DrawerClass extends StatefulWidget {
+            DrawerClass({Key? key}) : super(key: key);
+
+            @override
+            _DrawerClassState createState() => _DrawerClassState();
+        }
+
+        class _DrawerClassState extends State<DrawerClass> {
+        
+        @override
+        void initState() {
+            super.initState();
+        }
+        ```
