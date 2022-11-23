@@ -309,3 +309,209 @@ C
             super.initState();
         }
         ```
+
+================================
+
+# Web Service Integration #
+
+**Assignment 9 PBP : Flutter's Web Service Integration**
+
+*Farras Hafizhudin Indra Wijaya - 2106652682 - PBP B*
+
+# JSON 101 #
+
+*Source* : [Wikipedia](https://en.wikipedia.org/wiki/JSON)
+
+JSON is an open standard file format and data interchange format that uses human-readable text to store and transmit data objects consisting of attribute–value pairs and arrays. It is a common data format with diverse uses in electronic data interchange, including that of web applications with servers.
+
+**Question About JSON**
+
+Can we fetch JSON's without making a model first? if so, what makes it better rather than the other way around?
+
+> You can, but it's not "better" than making the model first because Flutter's gathering method is manually converting by using the convert library owned by Dart, unlike the case with Django which has an out of the box serializer.
+
+# Widgets Catalog #
+
+*Source* : [Flutter Docs](https://docs.flutter.dev/development/ui/widgets)
+
+- [x] Basic Widgets
+    - **AppBar**
+        
+        A Material Design app bar that consists of a toolbar and  - potentially other widgets, such as a TabBar and a FlexibleSpaceBar.
+    
+    - **Icons, Scaffold**
+  
+        Implements the basic Material Design visual layout structure. This class provides APIs for showing drawers, snack bars, and bottom sheets.
+
+    - **Column, Row, Container**
+  
+        Widgets that combine common painting, positioning, and sizing widgets.
+
+- [x] Text Widgets
+    - **Text, TextStyle & TextButton**
+  
+        A run of text with a single style. The text style to apply to descendant Text widgets with explicit style.
+
+- [x] Interactivity Widgets
+    - **Floating Action Button**
+
+        Widget that floats on the screen over other widgets. It appears as a circular icon on the screen with an icon in its center as its child.
+
+- [x] Future & Async Widgets
+    - **Futures Data Type & FutureBuilder**
+
+        Widget that builds itself based on the latest snapshot of interaction with a Future. The future must have been obtained earlier, e.g. during State.initState, State.didUpdateWidget, or State.didChangeDependencies. It must not be created during the State.build or StatelessWidget.build method call when constructing the FutureBuilder. If the future is created at the same time as the FutureBuilder, then every time the FutureBuilder's parent is rebuilt, the asynchronous task will be restarted.
+
+# Flutter's JSON Fetch Mechanism #
+
+1. Fetching data from web service then displaying it to applications with http's depedencies such as post, get, put, etc.
+   
+2. Refactor code (refactor code) is the process of restructuring existing program code without changing the behavior of the program. This process is carried out to improve readability, reduce code complexity, and facilitate the maintenance process in the future.
+   
+3. Create a custom model adapted to json data via quicktype.
+   
+4. Added HTTP Dependencies.
+   
+5. Retrieving and Processing Data from Web Services.
+   
+6. Displaying Data from Web Service.
+
+# Checklist Implementations #
+
+- [x] Add HTTP Dependencies in AndroidManifest's XML.
+    ``` 
+        <application>
+        ...
+        </application>
+        <!-- Required to fetch data from the Internet. -->
+        <uses-permission android:name="android.permission.INTERNET" />
+    ``` 
+    ```
+        import 'package:counter_7/drawer.dart';
+        import 'package:counter_7/page/watchlists_detail.dart';
+        import 'package:flutter/material.dart';
+        import 'package:http/http.dart' as http;
+        import 'dart:convert';
+        import 'package:counter_7/model/mywatchlists.dart';
+        import 'package:counter_7/page/watchlists_detail.dart';
+    ```
+
+- [x] Fetch JSON using HTTP Get & Create new Drawer's ListTile to gain access.
+    ```dart
+        class _WatchListState extends State<WatchList> {
+    Future<List<MyWatchList>> fetchwatchlist() async {
+        var url = Uri.parse(
+            'https://tugas-2-pbp-jay.herokuapp.com/mywatchlist/json/');
+        var response = await http.get(
+        url,
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+        },
+        );
+
+        // decode the response into the json form
+        var data = jsonDecode(utf8.decode(response.bodyBytes));
+
+        // convert the json data into watchlist object
+        List<MyWatchList> listwatchlist = [];
+        for (var d in data) {
+        if (d != null) {
+            listwatchlist.add(MyWatchList.fromJson(d));
+        }
+        }
+        return listwatchlist;
+    }
+    ```
+    ```dart
+      ListTile(
+        leading: Icon(Icons.watch_later),
+        title: Text("My Watchlist"),
+        onTap: () {
+            Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const WatchList()),
+            );
+    ```
+
+- [x] Show Fetched Data From Web Service.
+    ```dart
+    body: FutureBuilder(
+    future: fetchwatchlist(),
+    builder: (context, AsyncSnapshot snapshot) {
+        if (snapshot.data == null) {
+        return const Center(child: CircularProgressIndicator());
+        } else {
+        if (!snapshot.hasData) {
+            return Column(
+            children: const [
+                Text(
+                "My Watchlists is empty, sadge D:",
+                style:
+                    TextStyle(color: Color(0xff59A5D8), fontSize: 20),
+                ),
+                SizedBox(height: 8),
+            ],
+            );
+        } else {
+            return ListView.builder(
+                itemCount: snapshot.data!.length,
+                itemBuilder: (_, index) => Container(
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.all(20.0),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15.0),
+                        boxShadow: const [
+                            BoxShadow(
+                                color: Colors.black, blurRadius: 2.0)
+                        ]),
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                        TextButton(
+                            onPressed: () {
+                            Details._getFields = snapshot.data![index].fields;
+                            print(Details.fetcher.toString());
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => WatchListDetails()),
+                            );
+                            },
+                            child: Text(
+                            "${snapshot.data![index].fields.title}",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.pink,
+                            ),
+                            )
+                        ),
+                        const SizedBox(height: 10),
+    ```
+
+- [x] Pass Data Into Watchlist's Detail
+      
+    ```dart
+    Text(
+        Details.fetcher.title,
+        style: const TextStyle(
+        fontSize: 36,
+        fontWeight: FontWeight.bold,
+        ),
+    ),
+    const SizedBox(height: 10),
+    Text("Release Date : " + Details.fetcher.releaseDate, style: const TextStyle(fontSize: 24)),
+    Text("Rating : " + Details.fetcher.rating.toString(), style: const TextStyle(fontSize: 24)),
+    Text("Watched : " + Details.showStatus(), style: const TextStyle(fontSize: 24)),
+    Text("Review : " + Details.fetcher.review, style: const TextStyle(fontSize: 24)),
+    FloatingActionButton(
+        onPressed: () {
+        Navigator.pop(context);
+        },
+        child: Text("Back", style: const TextStyle(fontSize: 18)),
+    )
+    ```
