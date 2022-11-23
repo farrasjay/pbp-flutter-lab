@@ -1,3 +1,5 @@
+import 'package:counter_7/model/mywatchlists.dart';
+import 'package:counter_7/page/mywatchlists_page.dart';
 import 'package:flutter/material.dart';
 import 'package:counter_7/form.dart';
 import 'package:counter_7/main.dart';
@@ -24,7 +26,7 @@ class _DrawerClassState extends State<DrawerClass> {
         children: [
           // other children,
           ListTile(
-            leading: Icon(Icons.home),
+            leading: Icon(Icons.numbers),
             title: Text("Counter"),
             onTap: () {
               Navigator.pushReplacement(
@@ -34,7 +36,7 @@ class _DrawerClassState extends State<DrawerClass> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.report),
+            leading: Icon(Icons.build),
             title: Text("Tambah Budget"),
             onTap: () {
               Navigator.pushReplacement(
@@ -44,12 +46,22 @@ class _DrawerClassState extends State<DrawerClass> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.settings),
+            leading: Icon(Icons.data_array),
             title: Text("Data Budget"),
             onTap: () {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const BudgetDataPage()),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.watch_later),
+            title: Text("My Watchlist"),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const WatchList()),
               );
             },
           ),
